@@ -50,7 +50,7 @@ cld2_haskell_shim_impl(const char *buffer,
   hints.tld_hint = tld_hint;
   hints.encoding_hint = encoding_hint;
   hints.language_hint = static_cast<Language>(language_hint);
-  
+
   result = ExtDetectLanguageSummary(buffer, buffer_length,
                                     is_plain_text != 0,
                                     &hints,
@@ -63,15 +63,15 @@ cld2_haskell_shim_impl(const char *buffer,
                                     &my_is_reliable);
 
   *num_chunks = resultChunks.size();
-  *chunk_offsets = 
+  *chunk_offsets =
     static_cast<int*>(calloc(*num_chunks, sizeof (int)));
   *chunk_sizes = static_cast<unsigned short*>
     (calloc(*num_chunks, sizeof (unsigned short)));
   *chunk_langs =
     static_cast<unsigned short*>(calloc(*num_chunks, sizeof (unsigned short)));
 
-  if(*chunk_offsets == NULL || 
-     *chunk_sizes == NULL || 
+  if(*chunk_offsets == NULL ||
+     *chunk_sizes == NULL ||
      *chunk_langs == NULL) {
     free(chunk_offsets);
     free(chunk_sizes);
@@ -113,7 +113,7 @@ cld2_haskell_shim(int *result,
                   int *text_bytes,
                   int *is_reliable) {
   try {
-    int my_result = 
+    int my_result =
       cld2_haskell_shim_impl(buffer,
                              buffer_length,
                              is_plain_text,
@@ -137,6 +137,6 @@ cld2_haskell_shim(int *result,
   } catch(...) {
     return -1;
   }
-  
+
   return 0;
 }

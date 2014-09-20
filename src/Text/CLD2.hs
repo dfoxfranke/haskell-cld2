@@ -672,7 +672,7 @@ data Language =
   deriving (Eq,Ord,Show,Bounded,Enum,Typeable,Data)
 
 -- | An enumeration of character encodings which can be included in 'Hints'
-data Encoding = 
+data Encoding =
   Cld2Encoding_ISO_8859_1
   | Cld2Encoding_ISO_8859_2
   | Cld2Encoding_ISO_8859_3
@@ -752,7 +752,7 @@ data Encoding =
 
 -- | A collection of contextual clues which can help improve the
 -- accuracy of language detection
-data Hints = 
+data Hints =
     Hints { -- | The value of the @Content-Language@ HTTP header
             hintContentLanguage :: Maybe String,
             -- | The TLD of the website which served the corpus being analyzed
@@ -780,8 +780,8 @@ data DebugFlags = DebugFlags { debugFlagScoreAsQuads :: Bool,
 defaultDebugFlags :: DebugFlags
 defaultDebugFlags = DebugFlags False False False False False False
 
--- | Represents a range of text and its detected language 
-data Chunk = 
+-- | Represents a range of text and its detected language
+data Chunk =
     Chunk { -- | The offset of the start of the chunk, in bytes
             chunkOffset :: Int,
             -- | The size of the chunk, in bytes
@@ -791,12 +791,12 @@ data Chunk =
              deriving (Eq,Ord,Show,Typeable,Data)
 
 -- | The result of performing language detection on a corpus
-data Result = Result { 
+data Result = Result {
       -- | The primary language of the corpus
       resultSimple :: Language,
       -- | The top three most prevalent languages in the corpus
       resultTop3 :: (Language, Language, Language),
-      -- | The 
+      -- | The
       resultTop3Percent :: (Int, Int, Int),
       -- | Confidence scores for the top three most prevalent languages
       resultTop3Score :: (Double, Double, Double),
@@ -842,13 +842,13 @@ withMaybeCString Nothing f = f nullPtr
 -- | This function is the most general way to invoke CLD2. Since setting
 -- debug flags can cause output on stderr, the result is returned in the IO
 -- monad.
-detectLanguageDebug :: 
+detectLanguageDebug ::
     Text -- ^ The corpus to be analyzed
     -> Bool -- ^ True for plain text, False for HTML
     -> Hints
     -> DebugFlags
     -> IO Result
-detectLanguageDebug text isPlainText hints flags = 
+detectLanguageDebug text isPlainText hints flags =
   unsafeUseAsCStringLen (encodeUtf8 text) $ \(cStr,cLen) ->
     withMaybeCString (hintContentLanguage hints) $ \cContentLanguage ->
       withMaybeCString (hintTLD hints) $ \cTld ->
@@ -871,7 +871,7 @@ detectLanguageDebug text isPlainText hints flags =
                             let cBufferLen = toEnum cLen
                             (cChunkOffsets,cChunkSizes,cChunkLangs) <-
                                 mask_ $ do
-                                  cResult <- 
+                                  cResult <-
                                       c_cld2_haskell_shim
                                       cResultLangPtr cStr cBufferLen
                                       cIsPlainText cContentLanguage cTld
@@ -927,13 +927,13 @@ detectLanguageDebug text isPlainText hints flags =
                             let (CDouble theScore0) = cScore0
                             let (CDouble theScore1) = cScore1
                             let (CDouble theScore2) = cScore2
-                            let theChunks = 
+                            let theChunks =
                                     (flip map)
                                     (zip3 cChunkOffsets cChunkSizes
                                           cChunkLangs)
                                     (\(offset,size,language) ->
-                                         Chunk 
-                                         (fromEnum offset) 
+                                         Chunk
+                                         (fromEnum offset)
                                          (fromEnum size)
                                          (toEnum . fromEnum $ language))
                             let theTextBytes = fromEnum cTextBytes
@@ -946,12 +946,12 @@ detectLanguageDebug text isPlainText hints flags =
 -- | Call 'detectLanguageDebug' with all debug flags disabled and
 -- call 'unsafePerformIO' on the result. This is the recommended
 -- function for most use cases.
-detectLanguage :: 
+detectLanguage ::
     Text  -- ^ The corpus to be analyzed
     -> Bool -- ^ True for plain text, False for HTML
     -> Hints -> Result
-detectLanguage text isPlainText hints = 
-    unsafePerformIO $ 
+detectLanguage text isPlainText hints =
+    unsafePerformIO $
     detectLanguageDebug text isPlainText hints defaultDebugFlags
 
 -- | Call 'detectLanguage' on HTML input with no hints and return the
