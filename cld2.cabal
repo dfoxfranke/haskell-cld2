@@ -3,7 +3,7 @@ version: 0.1.0.1
 synopsis: Haskell bindings to Google's Compact Language Detector 2
 description: This package provides simple Haskell bindings for Compact Language
              Detector 2, a language-detection library used by Google Chrome.
-             See https://code.google.com/p/cld2/ for more information on CLD2.
+             See <https://code.google.com/p/cld2/> for more information on CLD2.
 homepage: https://github.com/dfoxfranke/haskell-cld2
 license: Apache-2.0
 license-file: LICENSE
