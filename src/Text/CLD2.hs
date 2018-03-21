@@ -1,4 +1,4 @@
-{-# LANGUAGE Trustworthy, DeriveDataTypeable #-}
+{-# LANGUAGE Trustworthy, DeriveDataTypeable, DeriveAnyClass, DeriveGeneric #-}
 {-# OPTIONS_HADDOCK show-extensions #-}
 
 {-
@@ -41,6 +41,7 @@ import Data.ByteString(ByteString)
 import Data.ByteString.Unsafe(unsafeUseAsCStringLen)
 import Data.Data(Data)
 import Data.Functor((<$>))
+import Data.Hashable(Hashable)
 import Data.Text(Text)
 import Data.Text.Encoding(encodeUtf8)
 import Data.Typeable(Typeable)
@@ -51,6 +52,7 @@ import Foreign.Ptr(Ptr(..), nullPtr)
 import Foreign.Marshal.Alloc(alloca, free)
 import Foreign.Marshal.Array(peekArray, allocaArray)
 import Foreign.Storable(peek)
+import GHC.Generics(Generic)
 import System.IO.Unsafe(unsafePerformIO)
 
 -- | An enumeration of all languages recognized by CLD2
@@ -748,7 +750,7 @@ data Encoding =
   | Cld2Encoding_SOFTBANK_SHIFT_JIS
   | Cld2Encoding_KDDI_ISO_2022_JP
   | Cld2Encoding_SOFTBANK_ISO_2022_JP
-  deriving (Eq,Ord,Show,Bounded,Enum,Typeable,Data)
+  deriving (Eq,Ord,Show,Bounded,Enum,Typeable,Data,Generic,Hashable)
 
 -- | A collection of contextual clues which can help improve the
 -- accuracy of language detection
