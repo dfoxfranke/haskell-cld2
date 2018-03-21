@@ -70,6 +70,7 @@ library
                    cbits/scoreonescriptspan.cc,
                    cbits/tote.cc,
                    cbits/utf8statetable.cc
+        cc-options: -std=c++98
         extra-libraries: stdc++
         exposed-modules: Text.CLD2
         build-depends: base ==4.*,
