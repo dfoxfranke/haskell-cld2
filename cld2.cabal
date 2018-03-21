@@ -1,5 +1,5 @@
 name: cld2
-version: 0.1.0.1
+version: 0.1.1.0
 synopsis: Haskell bindings to Google's Compact Language Detector 2
 description: This package provides simple Haskell bindings for Compact Language
              Detector 2, a language-detection library used by Google Chrome.
