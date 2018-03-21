@@ -8,7 +8,7 @@ homepage: https://github.com/dfoxfranke/haskell-cld2
 license: Apache-2.0
 license-file: LICENSE
 author: Daniel Fox Franke <dfoxfranke@gmail.com>
-maintainer: Daniel Fox Franke <dfoxfranke@gmail.com>
+maintainer: Kostiantyn Rybnikov <k-bx@k-bx.com>
 copyright: Copyright 2014 Daniel Fox Franke
 category: Text
 build-type: Simple
