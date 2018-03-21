@@ -45,6 +45,7 @@ source-repository head
         location: https://github.com/dfoxfranke/haskell-cld2.git
 
 library
+        ghc-options: -Wall
         c-sources: cbits/cld2_generated_cjk_compatible.cc,
                    cbits/cld2_generated_deltaocta0122.cc,
                    cbits/cld2_generated_distinctocta0122.cc,

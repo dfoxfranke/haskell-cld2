@@ -37,7 +37,6 @@ module Text.CLD2 (
 
 import Control.Exception(AsyncException(..),AssertionFailed(..),mask_,throwIO)
 import Data.Bits(Bits(..), (.|.))
-import Data.ByteString(ByteString)
 import Data.ByteString.Unsafe(unsafeUseAsCStringLen)
 import Data.Data(Data)
 import Data.Functor((<$>))
@@ -48,7 +47,7 @@ import Data.Typeable(Typeable)
 import Foreign.C.Error(Errno(..), eNOMEM, eOK)
 import Foreign.C.String(CString, withCString)
 import Foreign.C.Types(CShort(..),CInt(..),CChar(..),CDouble(..),CSize(..))
-import Foreign.Ptr(Ptr(..), nullPtr)
+import Foreign.Ptr(Ptr, nullPtr)
 import Foreign.Marshal.Alloc(alloca, free)
 import Foreign.Marshal.Array(peekArray, allocaArray)
 import Foreign.Storable(peek)
@@ -671,7 +670,7 @@ data Language =
   | Cld2Language_X_Sharada
   | Cld2Language_X_Sora_Sompeng
   | Cld2Language_X_Takri
-  deriving (Eq,Ord,Show,Bounded,Enum,Typeable,Data)
+  deriving (Eq,Ord,Show,Bounded,Enum,Typeable,Data,Generic,Hashable)
 
 -- | An enumeration of character encodings which can be included in 'Hints'
 data Encoding =
@@ -763,7 +762,7 @@ data Hints =
             hintEncoding :: Encoding,
             -- | A hint from any other available context
             hintLanguage :: Language }
-             deriving (Eq,Ord,Show,Typeable,Data)
+             deriving (Eq,Ord,Show,Typeable,Data,Generic,Hashable)
 
 -- | The default set of hints, which is @Hints@ @Nothing@ @Nothing@ @Cld2Encoding_UNKNOWN_ENCODING@ @Cld2Language_UNKNOWN_LANGUAGE@
 defaultHints :: Hints
@@ -776,7 +775,7 @@ data DebugFlags = DebugFlags { debugFlagScoreAsQuads :: Bool,
                                debugFlagVerbose :: Bool,
                                debugFlagQuiet :: Bool,
                                debugFlagEcho :: Bool }
-                  deriving (Eq,Ord,Show,Typeable,Data)
+                  deriving (Eq,Ord,Show,Typeable,Data,Generic,Hashable)
 
 -- | The default set of debugging flags, all @False@
 defaultDebugFlags :: DebugFlags
@@ -790,7 +789,7 @@ data Chunk =
             chunkSize :: Int,
             -- | The detected language of this chunk
             chunkLanguage :: Language }
-             deriving (Eq,Ord,Show,Typeable,Data)
+             deriving (Eq,Ord,Show,Typeable,Data,Generic,Hashable)
 
 -- | The result of performing language detection on a corpus
 data Result = Result {
@@ -808,7 +807,7 @@ data Result = Result {
       resultTextBytes :: Int,
       -- | Whether this result should be considered reliable
       resultIsReliable :: Bool }
-              deriving (Eq,Ord,Show,Typeable,Data)
+              deriving (Eq,Ord,Show,Typeable,Data,Generic,Hashable)
 
 foreign import ccall "cld2_haskell_shim" c_cld2_haskell_shim ::
   Ptr CInt -> Ptr CChar -> CInt -> CInt -> CString -> CString -> CInt -> CInt
@@ -826,7 +825,7 @@ cIntToBool _ = True
 
 takeBit :: (Bits a) => a -> Bool -> a
 takeBit x True = x
-takeBit x False = zeroBits
+takeBit _x False = zeroBits
 
 flagsToCInt :: DebugFlags -> CInt
 flagsToCInt (DebugFlags a b c d e f) =
@@ -913,7 +912,7 @@ detectLanguageDebug text isPlainText hints flags =
                                 peekArray 3 cPercent3
                             [cScore0, cScore1, cScore2] <-
                                 peekArray 3 cScore3
-                            cNumChunks <- fromEnum <$> peek cNumChunksPtr
+                            _cNumChunks <- fromEnum <$> peek cNumChunksPtr
                             cTextBytes <- peek cTextBytesPtr
                             cIsReliable <- peek cIsReliablePtr
                             let theSimple =
@@ -944,6 +943,7 @@ detectLanguageDebug text isPlainText hints flags =
                                    theSimple theTop3 theTop3Percent
                                    (theScore0, theScore1, theScore2)
                                    theChunks theTextBytes theIsReliable
+
 
 -- | Call 'detectLanguageDebug' with all debug flags disabled and
 -- call 'unsafePerformIO' on the result. This is the recommended
